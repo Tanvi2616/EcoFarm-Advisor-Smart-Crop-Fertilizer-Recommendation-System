@@ -1,4 +1,4 @@
-#🌿 EcoFarm Advisor: Crop & Fertilizer Recommendation System
+🌿 EcoFarm Advisor: Crop & Fertilizer Recommendation System
 
 EcoFarm Advisor is an AI-powered farming assistant that recommends the best suitable crop, fertilizers, organic alternatives, and provides live weather insights based on soil nutrients and location. It uses a trained Machine Learning model along with real-time weather data to support sustainable and smart agriculture. The project includes a modern UI built with Streamlit.
 
@@ -23,6 +23,7 @@ Python, NumPy, Pandas, Scikit-learn, Streamlit, OpenWeather API, Pickle
 
 ## 📷 App Preview
 Visit the live app to try it out:
+
 🔗 https://ecofarm-advisor-smart-crop-fertilizer-recommendation-system-gd.streamlit.app/
 
 ## 🌐 Deployment
