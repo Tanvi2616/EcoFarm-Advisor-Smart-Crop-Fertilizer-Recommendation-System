@@ -133,8 +133,32 @@ st.markdown("""
         margin-bottom: 0.25rem;
     }
     
+    
 </style>
 """, unsafe_allow_html=True)
+
+# # BACKGROUND IMAGE 
+# def set_bg(path):
+#     if os.path.exists(path):
+#         with open(path, "rb") as f:
+#             encoded = base64.b64encode(f.read()).decode()
+
+#         st.markdown(
+#             f"""
+#             <style>
+#             .stApp {{
+#                 background: url("data:image/jpg;base64,{encoded}");
+#                 background-size: cover;
+#                 background-position: center;
+#                 background-attachment: fixed;
+#             }}
+#             </style>
+#             """,
+#             unsafe_allow_html=True
+#         )
+
+# Uncomment the line below if you have bg3.png in your directory
+#set_bg("bg.png")
 
 # ================================
 # LOAD MODEL
@@ -161,6 +185,7 @@ def get_weather(city):
 
         temp = res["main"]["temp"]
         hum = res["main"]["humidity"]
+        
         rain = res.get("rain", {}).get("1h", 0)
         soil_m = round((hum/100)*0.6 + (rain*0.4), 3)
 
@@ -190,11 +215,45 @@ def make_features(N,P,K,pH,temp,rain):
         else: row.append(0)
     return np.array(row).reshape(1,-1)
 
+
+def get_soil_health(n, p, k, ph):
+    health = []
+
+    if n < 60:
+        health.append("Nitrogen: LOW")
+    elif n > 120:
+        health.append("Nitrogen: HIGH")
+    else:
+        health.append("Nitrogen: OPTIMAL")
+
+    if p < 30:
+        health.append("Phosphorus: LOW")
+    elif p > 80:
+        health.append("Phosphorus: HIGH")
+    else:
+        health.append("Phosphorus: OPTIMAL")
+
+    if k < 30:
+        health.append("Potassium: LOW")
+    elif k > 80:
+        health.append("Potassium: HIGH")
+    else:
+        health.append("Potassium: OPTIMAL")
+
+    if ph < 5.5:
+        health.append("Soil pH: ACIDIC")
+    elif ph > 7.5:
+        health.append("Soil pH: ALKALINE")
+    else:
+        health.append("Soil pH: NEUTRAL (GOOD)")
+
+    return health
+
 # ================================
 # PAGE HEADER
 # ================================
 st.markdown("<h1 class='main-header'>🌿 EcoFarm Advisor </h1>", unsafe_allow_html=True)
-st.markdown("<h2 class='sub-header'>Crop & Fertilizer Recommendation System</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='sub-header' >Crop & Fertilizer Recommendation System</h2>", unsafe_allow_html=True)
 
 # ================================
 # INPUT SECTION
@@ -266,41 +325,58 @@ if predict_btn:
             # Display Results
             st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
             
-            # Recommended Crop
+            # Display Results
+            st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+            
+            # ⭐ Soil Health Report
+            soil_health = get_soil_health(N, P, K, pH)
             st.markdown("""
-            <div class='result-card crop-card'>
-                <div class='section-header'>🌾 Recommended Crop</div>
-                <div style='text-align: center; font-size: 2.5rem; font-weight: 700; color: #15803d; padding: 1rem;'>
+                        <div class='result-card organic-card'>
+                        <div class='section-header'>🪴 Soil Health Report</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+            
+        for item in soil_health:
+            st.markdown(f"<div class='list-item organic-item'>• {item}</div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
+
+
+            
+        # Recommended Crop
+        st.markdown("""
+                        <div class='result-card crop-card'>
+                        <div class='section-header'>🌾 Recommended Crop</div>
+                        <div style='text-align: center; font-size: 2.5rem; font-weight: 700; color: #15803d; padding: 1rem;'>
                     {}
                 </div>
             </div>
             """.format(crop.upper()), unsafe_allow_html=True)
             
-            # Fertilizer Suggestions
-            st.markdown("""
+        # Fertilizer Suggestions
+        st.markdown("""
             <div class='result-card fertilizer-card'>
                 <div class='section-header' style='color: #1e40af;'>🧪 Fertilizer Suggestions</div>
             """, unsafe_allow_html=True)
             
-            for f in ferts:
+        for f in ferts:
                 st.markdown(f"<div class='list-item fertilizer-item'>• {f}</div>", unsafe_allow_html=True)
             
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
             
             # Organic Alternatives
-            st.markdown("""
+        st.markdown("""
             <div class='result-card organic-card'>
                 <div class='section-header'>🌿 Organic Alternatives</div>
             """, unsafe_allow_html=True)
             
-            for group in organic_alts.values():
+        for group in organic_alts.values():
                 for alt in group:
                     st.markdown(f"<div class='list-item organic-item'>− {alt}</div>", unsafe_allow_html=True)
             
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
             
             # Weather Information
-            st.markdown("""
+        st.markdown("""
             <div class='result-card weather-card'>
                 <div class='section-header' style='color: #0369a1;'>⛅ Weather Conditions</div>
                 <div class='weather-grid'>
@@ -329,7 +405,7 @@ if predict_btn:
             """.format(temp, hum, rain, soil_moist), unsafe_allow_html=True)
             
             # Carbon Emission
-            st.markdown("""
+        st.markdown("""
             <div class='result-card carbon-card'>
                 <div class='section-header' style='color: #92400e;'>🏭 Carbon Emission Estimate</div>
                 <div style='text-align: center; padding: 1.5rem; background: rgba(255, 255, 255, 0.5); border-radius: 0.5rem; border: 2px solid #fbbf24;'>
@@ -338,5 +414,4 @@ if predict_btn:
                 </div>
             </div>
             """.format(carbon), unsafe_allow_html=True)
-
 
