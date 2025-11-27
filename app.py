@@ -11,10 +11,6 @@ st.set_page_config(page_title="AI Crop Advisor", layout="centered")
 # CUSTOM CSS FOR ATTRACTIVE UI
 st.markdown("""
 <style>
-    /* Main background gradient */
-    .stApp {
-        background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 50%, #ccfbf1 100%);
-    }
     
     /* Header styling */
     .main-header {
@@ -139,29 +135,6 @@ st.markdown("""
     
 </style>
 """, unsafe_allow_html=True)
-
-# BACKGROUND IMAGE 
-def set_bg(path):
-    if os.path.exists(path):
-        with open(path, "rb") as f:
-            encoded = base64.b64encode(f.read()).decode()
-
-        st.markdown(
-            f"""
-            <style>
-            .stApp {{
-                background: url("data:image/jpg;base64,{encoded}");
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
-
-# Uncomment the line below if you have bg3.png in your directory
-#set_bg("bg.png")
 
 # ================================
 # LOAD MODEL
@@ -365,4 +338,5 @@ if predict_btn:
                 </div>
             </div>
             """.format(carbon), unsafe_allow_html=True)
+
 
